@@ -1,7 +1,8 @@
-<h1> Users
+# Users
 demoo app with basic REST API
 
-<h2> REST API
+## REST API
+
 list of basic routes:
 
 Route | HTTP | Description
@@ -14,8 +15,8 @@ Route | HTTP | Description
 /api/users/:id | PUT | Update a users
 /api/users/:id | DELETE | Delete a users
 
-<h2> Usage
-
-npm install
-npm start
-npm run dev
+##Usage
+```
+* npm install
+* npm start
+```
