@@ -15,7 +15,7 @@ Route | HTTP | Description
 /api/users/:id | PUT | Update a users
 /api/users/:id | DELETE | Delete a users
 
-##Usage
+## Usage
 ```
 npm install
 npm start
