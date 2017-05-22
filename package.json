@@ -17,8 +17,10 @@
   },
   "homepage": "https://github.com/jamessraun/rest-api-crud#readme",
   "dependencies": {
+    "bcrypt": "^1.0.2",
     "body-parser": "^1.17.2",
     "express": "^4.15.3",
+    "jsonwebtoken": "^7.4.1",
     "pg": "^6.2.2",
     "sequelize": "^3.30.4"
   }
