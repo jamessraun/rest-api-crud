@@ -1,34 +1,10 @@
 var db = require('../models')
-var jwt = require('jsonwebtoken')
 var bcrypt = require('bcrypt')
-var passwordHash = require('../helpers/hashPassword')
+var jwt = require('jsonwebtoken')
 
-
-
-var authorizedRole= (req,res,next)=> {
-  let token =req.headers.token
-  if(token){
-    jwt.verify(token, 'rahasiacoy', function(err, decoded) {
-    console.log(decoded)
-      if(decoded.role==='admin'){
-      console.log(decoded.role);
-        req.body.role='admin'
-        next()
-      }else if(decoded.role==='user'){
-      console.log(decoded.role);
-        req.body.role='user'
-        next()
-      }
-      else res.send({message:'login Admin cyin'})
-
-    });
-  }else {
-    res.send({message:'login cyin'})
-  }
-}
 
 var signup = (req,res) => {
-  const saltRounds=10;
+  var saltRounds=10;
 
   bcrypt.hash(req.body.password,saltRounds,(err,password)=>{
     db.User.create({name:req.body.name,username:req.body.username,password:password,email:req.body.email,role:req.body.role})
@@ -44,19 +20,14 @@ var signup = (req,res) => {
 var login = (req,res) => {
   db.User.findOne({where:{username:req.body.username}})
   .then(user => {
-    console.log('-----------name',user.name);
-        bcrypt.compare(req.body.password, user.password).then(function(result) {
-          console.log(result);
+        bcrypt.compare(req.body.password, user.password).then(result => {
           if(result){
-            let token = jwt.sign({username:user.username,email:user.email,role:user.role},'rahasiacoy')
-            console.log('asdfsdf');
-            console.log(token);
+            let token = jwt.sign({id:user.id,name:user.name,username:user.username,email:user.email,role:user.role},'rahasiacoy')
             res.send(token)
           }
           else res.send('Failed')
       });
   })
-
 }
 
 var getAllUser = (req,res) => {
@@ -71,11 +42,13 @@ var getAllUser = (req,res) => {
 }
 
 var getUserById = (req,res) => {
-
-  db.User.findById(req.params.id)
-  .then(user => {
-    res.send(user)
-  })
+    if(req.params.id==req.body.id){
+      console.log('masuk sini');
+      db.User.findById(req.params.id)
+      .then(user => {
+        res.send(user)
+      })
+    }else res.send('You are not authorized')
 }
 
 var createUser = (req,res) => {
@@ -95,11 +68,12 @@ if(req.body.role==='admin'){
 }
 
 var updateUser = (req,res) => {
-  db.User.update(req.body,{where:{id:req.id}})
-  .then(() => {
-    res.send('User has been updated')
-  })
-
+  if(req.params.id==req.body.id){
+    db.User.update(req.body,{where:{id:req.id}})
+    .then((user) => {
+      res.send(`user has been updated`)
+    })
+  }else res.send('You are not authorized')
 }
 
 var deleteUser = (req,res) => {
@@ -114,12 +88,11 @@ var deleteUser = (req,res) => {
 }
 
 module.exports = {
-  login,
-  authorizedRole,
-  signup,
-  getAllUser,
-  getUserById,
-  createUser,
-  updateUser,
-  deleteUser
+  login:login,
+  signup:signup,
+  getAllUser:getAllUser,
+  getUserById:getUserById,
+  createUser:createUser,
+  updateUser:updateUser,
+  deleteUser:deleteUser
 }
